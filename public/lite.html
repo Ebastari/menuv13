@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Manajemen Integrated Nursery - Modern</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #4CAF50; /* Base green */
+            --dark-green: #388E3C; /* Darker green */
+            --light-green: #E8F5E9; /* Lighter green */
+            --text-dark: #333333;
+            --text-light: #666666;
+            --background-light: #F8F8F8;
+            --card-background: #FFFFFF;
+            --border-color: #EEEEEE;
+            --shadow-light: rgba(0, 0, 0, 0.08); /* Sedikit lebih gelap */
+            --shadow-medium: rgba(0, 0, 0, 0.15); /* Lebih jelas */
+            --accent-green: #66BB6A; /* Green aksen untuk gradien */
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            /* Background gradien yang indah */
+            background: linear-gradient(135deg, var(--primary-green) 0%, #38A057 100%);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .app-container {
+            background-color: var(--background-light);
+            width: 100%;
+            max-width: 420px;
+            border-radius: 28px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 15px 40px var(--shadow-medium);
+            position: relative;
+            min-height: 90vh;
+        }
+
+        .header-bg {
+            /* Gradien Header yang Lebih Kaya */
+            background: linear-gradient(100deg, var(--dark-green), var(--accent-green));
+            color: white;
+            padding: 25px 20px 80px 20px;
+            border-bottom-left-radius: 28px;
+            border-bottom-right-radius: 28px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            display: block;
+            transition: opacity 0.3s ease;
+        }
+        .header-bg:active, .header-bg:hover {
+            opacity: 0.95; /* Feedback saat disentuh/hover */
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .location-weather {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .location-weather span {
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            opacity: 0.9;
+        }
+
+        .location-weather i {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+
+        .greeting h1 {
+            margin: 0;
+            font-size: 1.8em;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .greeting p {
+            margin: 8px 0 0;
+            font-size: 1em;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .main-content-scroll {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 0 20px 20px 20px;
+            position: relative;
+            z-index: 2;
+            margin-top: -60px;
+            background-color: transparent;
+            /* Scrollbar styling */
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-green) var(--background-light);
+        }
+
+        /* Webkit Scrollbar */
+        .main-content-scroll::-webkit-scrollbar { width: 8px; }
+        .main-content-scroll::-webkit-scrollbar-track { background: var(--background-light); border-radius: 10px; }
+        .main-content-scroll::-webkit-scrollbar-thumb { background-color: var(--primary-green); border-radius: 10px; border: 2px solid var(--background-light); }
+
+        .plant-cards-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            margin-top: 10px;
+        }
+
+        .plant-card, .points-card {
+            background-color: var(--card-background);
+            border-radius: 18px;
+            box-shadow: 0 8px 20px var(--shadow-light); /* Shadow awal yang lebih dalam */
+            transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.25s ease; /* Transisi Easing yang lebih lembut */
+        }
+
+        .plant-card {
+            padding: 20px;
+            width: 100%;
+            max-width: 320px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+        .plant-card:hover, .points-card:hover {
+            transform: translateY(-7px) scale(1.01); /* Peningkatan efek lift dan skala */
+            box-shadow: 0 12px 30px var(--shadow-medium);
+        }
+        .plant-card:active, .points-card:active {
+            transform: translateY(-2px) scale(0.99); /* Efek 'push-down' saat di-tap/klik */
+        }
+
+        .plant-card .icon {
+            font-size: 2.5em;
+            color: white; /* Ikon menjadi putih */
+            /* Menggunakan gradien sebagai latar belakang ikon */
+            background: linear-gradient(45deg, #8BC34A, var(--primary-green));
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .plant-card-info h3 {
+            margin: 0;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        .plant-card-info p {
+            margin: 5px 0 0;
+            font-size: 0.9em;
+            color: var(--text-light);
+        }
+        .plant-card .arrow {
+            margin-left: auto;
+            color: var(--text-light);
+            font-size: 1.1em;
+            opacity: 0.7;
+        }
+
+        /* Styling baru untuk points-card yang lebih rapi */
+        .points-card {
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column; /* Mengubah menjadi kolom */
+            align-items: flex-start; /* Sejajarkan ke kiri */
+            gap: 10px; /* Jarak antar elemen */
+            margin-bottom: 25px;
+            position: relative; /* Untuk posisi tombol selengkapnya */
+        }
+        
+        .points-card .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .points-card .level-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .points-card .level-info span {
+            font-weight: 500;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+        }
+
+        .points-card .level-icon {
+            font-size: 1.2em; /* Ukuran ikon tanaman */
+            line-height: 1; /* Agar posisi vertikal ikon pas */
+            margin-left: 5px; /* Jarak dari teks level */
+        }
+
+
+        .points-card .time-info {
+            text-align: right;
+            font-size: 0.9em;
+        }
+        .points-card .time-info #liveTime {
+            font-weight: 600;
+            color: #2E7D32;
+            font-size: 1em; /* Mengatur ulang ukuran font agar konsisten */
+        }
+        .points-card .time-info small {
+            color: var(--text-light);
+            font-size: 0.8em; /* Ukuran font lebih kecil untuk deskripsi waktu */
+        }
+
+        .points-card #levelDesc {
+            color: #388E3C;
+            font-size: 0.85em;
+            margin-top: 5px; /* Sedikit jarak dari level */
+            display: block; /* Memastikan deskripsi di baris baru */
+        }
+
+        .points-card .details-btn {
+            background-color: var(--light-green); /* Warna hijau muda sebagai latar */
+            color: var(--dark-green); /* Warna teks hijau gelap */
+            padding: 8px 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            align-self: flex-end; /* Posisikan di kanan bawah card */
+            margin-top: 10px; /* Jarak dari konten di atasnya */
+        }
+        .points-card .details-btn:hover {
+            background-color: var(--primary-green);
+            color: white;
+            transform: scale(1.02);
+        }
+        .points-card .details-btn:active {
+            transform: scale(0.98);
+        }
+        /* Hapus .redeem-btn karena diganti .details-btn */
+
+        .section-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .feature-item {
+            background-color: var(--card-background);
+            border-radius: 18px;
+            padding: 18px 10px;
+            text-align: center;
+            box-shadow: 0 4px 10px var(--shadow-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-dark);
+            position: relative;
+            /* Menggunakan ulang transisi yang sudah diperbarui */
+            transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.25s ease;
+        }
+        .feature-item:hover {
+            transform: translateY(-5px) scale(1.03); /* Peningkatan efek lift dan skala */
+            box-shadow: 0 8px 20px var(--shadow-medium);
+        }
+        .feature-item:active {
+            transform: translateY(-1px) scale(0.98); /* Efek 'push-down' saat di-tap/klik */
+        }
+
+        .feature-item .icon {
+            font-size: 2.3em;
+            color: var(--dark-green); /* Menggunakan warna dark-green untuk ikon menu */
+            margin-bottom: 10px;
+            transition: color 0.2s ease;
+        }
+
+        .feature-item span {
+            font-size: 0.85em;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #FF5722;
+            color: white;
+            font-size: 0.6em;
+            padding: 4px 7px;
+            border-radius: 8px;
+            font-weight: 700;
+        }
+        .badge.beta {
+            background-color: #8BC34A;
+        }
+        
+        .bottom-nav {
+            /* Efek Glassmorphism halus */
+            background-color: rgba(255, 255, 255, 0.9);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            border-top: none; 
+            padding: 12px 0;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.15); /* Shadow yang lebih jelas */
+            position: sticky;
+            bottom: 0;
+            width: 100%;
+            border-top-left-radius: 28px;
+            border-top-right-radius: 28px;
+            z-index: 10;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 0.75em;
+            padding: 8px 5px;
+            flex: 1;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-item.active {
+            color: var(--primary-green);
+            font-weight: 600;
+        }
+        .nav-item:hover {
+            color: var(--primary-green);
+            transform: translateY(-2px); /* Subtle lift on hover */
+        }
+
+        .nav-item i {
+            font-size: 1.6em;
+            margin-bottom: 5px;
+            transition: transform 0.2s ease-out; /* Tambahkan transisi ikon */
+        }
+
+        .nav-item.active i {
+            /* Animasi bounce kecil saat aktif */
+            transform: scale(1.2) translateY(-2px);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .app-container { margin: 0; border-radius: 0; min-height: 100vh; }
+            .header-bg, .bottom-nav { border-radius: 0; }
+            .header-bg { padding: 20px 15px 70px 15px; }
+            .greeting h1 { font-size: 1.6em; }
+            .greeting p { font-size: 0.9em; }
+            .main-content-scroll { padding: 0 15px 15px 15px; margin-top: -50px; }
+            .plant-card { padding: 15px; gap: 10px; max-width: none; }
+            .plant-card .icon { width: 50px; height: 50px; font-size: 2.2em; }
+            .plant-card-info h3 { font-size: 1.1em; }
+            .plant-card-info p { font-size: 0.8em; }
+            .points-card { padding: 15px; }
+            .points-card .details-btn { padding: 8px 15px; font-size: 0.8em; }
+            .section-title { font-size: 1.2em; margin-bottom: 15px; }
+            .features-grid { gap: 10px; }
+            .feature-item { padding: 15px 8px; border-radius: 15px; }
+            .feature-item .icon { font-size: 2em; margin-bottom: 8px; }
+            .feature-item span { font-size: 0.8em; }
+            .bottom-nav { padding: 8px 0; }
+            .nav-item i { font-size: 1.4em; }
+            .nav-item span { font-size: 0.65em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        
+        <a href="https://www.msn.com/id-id/cuaca/prakiraan/in-Rantau,Kalimantan-Selatan?loc=eyJsIjoiUmFudGF1IiwiciI6IkthbGltYW50YW4gU2VsYXRhbiIsImMiOiJJbmRvbmVzaWEiLCJpIjoiSUQiLCJ0IjoxMDIsImciOiJpZC1pZCIsIngiOiIxMTUuMTQ0IiwieSI6Ii0yLjkzNzYifQ%3D%3D&weadegreetype=C&cvid=04f8efd46fc74e61c726ce185e11fa39" class="header-bg">
+            <div class="header-top">
+                <div class="location-weather">
+                    <span><i class="fas fa-map-marker-alt"></i><span id="currentLocation">Lokasi Anda</span></span>
+                    <span><i class="fas fa-sun"></i>Perkiraan Cuaca Hari Ini</span>
+                </div>
+            </div>
+            <div class="greeting">
+                <h1>Halo, Forester</h1>
+                <p>“Dari sahabat Anas ra, Rasulullah saw bersabda, ‘Tiada seorang muslim yang menanam pohon atau menebar bibit tanaman, lalu (hasilnya) dimakan oleh burung atau manusia, melainkan ia akan bernilai sedekah bagi penanamnya,’” (HR Bukhari, Muslim, dan At-Tirmidzi).</p>
+            </div>
+        </a>
+
+        <div class="main-content-scroll">
+            <div class="points-card">
+                <div class="top-row">
+                    <div class="level-info">
+                        <span>
+                            Tingkatan kamu sekarang adalah 
+                            <span id="currentLevel">Tumbuhan Bawah</span>
+                            <span id="levelIcon" class="level-icon"></span> 
+                        </span>
+                    </div>
+                    <div class="time-info">
+                        <span id="liveTime"></span>
+                        <small>waktu aktif di aplikasi</small>
+                    </div>
+                </div>
+                <small id="levelDesc"></small>
+                <a href="https://ebastari.github.io/Poin/Poin.html" class="details-btn">Selengkapnya</a>
+            </div>
+
+            <h2 class="section-title">Menu Utama</h2>
+            <div class="features-grid">
+                
+                <a href="https://www.arcgis.com/sharing/rest/content/items/e422f795c4774c65af35b034f2255894/data" class="feature-item">
+                    <span class="icon"><i class="fas fa-cloud-download-alt"></i></span>
+                    <span>Download Realisasi Penanaman...</span>
+                </a>
+                <a href="https://www.arcgis.com/sharing/rest/content/items/5e253c50a5364155a37390eeac2cc819/data" class="feature-item">
+                    <span class="icon"><i class="fas fa-file-download"></i></span>
+                    <span>Download Data IPPKH</span>
+                </a>
+                <a href="https://lookerstudio.google.com/s/oDcbCRPbvm0" class="feature-item">
+                    <span class="icon"><i class="fas fa-chart-line"></i></span>
+                    <span>Laporan Bibit</span>
+                </a>
+
+                <a href="https://www.msn.com/id-id/cuaca/peta/radar/in-Rantau,Kalimantan-Selatan?loc=eyJsIjoiUmFudGF1IiwiciI6IkthbGltYW50YW4gU2VsYXRhbiIsInIyIjoiVGFwaW4iLCJjIjoiSW5kb25lc2lhIiwiaSI6IklEIiwidCI6MTAyLCJnIjoiaWQtaWQiLCJ4IjoiMTE1LjA4OSIsInk6Ii0yLjk0ODkifQ%3D%3D&weadegreetype=C&zoom=13&rcmode=1" class="feature-item">
+                    <span class="icon"><i class="fas fa-cloud-sun-rain"></i></span>
+                    <span>Perkiraan Cuaca</span>
+                </a>
+                <a href="https://earth.google.com/earth/d/1d7_8J8ftqvA8qQ62EL41w5IeZ79UPipW?usp=sharing" class="feature-item">
+                    <span class="icon"><i class="fas fa-globe"></i></span>
+                    <span>Rencana Penanaman 2025</span>
+                </a>
+                <a href="https://drive.google.com/file/d/177quXwlMkQusQRSbZboRrNnFSqwNaZhw/view?usp=sharing" class="feature-item">
+                    <span class="icon"><i class="fas fa-book-open"></i></span>
+                    <span>Dokumen RR</span>
+                </a>
+
+                <a href="https://earth.google.com/earth/d/15MlvXHfZ5jiCw2DftfL-p6dF7Mmn7Yck?usp=sharing" class="feature-item">
+                    <span class="icon"><i class="fas fa-seedling"></i></span>
+                    <span>REALISASI POTTING 2025</span>
+                </a>
+                <a href="https://www.appsheet.com/start/1a40ac1b-9884-4c52-8891-7df37ba20d57" class="feature-item">
+                    <span class="icon"><i class="fas fa-newspaper"></i></span>
+                    <span>BERITA ACARA REALISASI</span>
+                </a>
+                <a href="https://www.appsheet.com/start/f912f118-c330-4435-b1f2-2d8834992211" class="feature-item">
+                    <span class="icon"><i class="fas fa-handshake"></i></span>
+                    <span>MOM</span>
+                </a>
+
+                <a href="https://www.appsheet.com/start/c686e2ea-ef8d-47bd-9318-80d81163c0c3" class="feature-item">
+                    <span class="icon"><i class="fas fa-spray-can"></i></span>
+                    <span>PESTISIDA</span>
+                </a>
+                <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-MxDIlfsMsI7yLQUgWTU6lNopE3HhhZAR1rLyis75FTYC_ZZb3jiwJe5WIH-X8nMEVsQLG8wS9Cug/pub?gid=1313870388&single=true&output=pdf&gridlines=false" class="feature-item">
+                    <span class="icon"><i class="fas fa-book"></i></span>
+                    <span>LOGBOOK BIBIT</span>
+                </a>
+                <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-MxDIlfsMsI7yLQUgWTU6lNopE3HhhZAR1rLyis75FTYC_ZZb3jiwJe5WIH-X8nMEVsQLG8wS9Cug/pub?gid=1313870388&single=true&output=pdf&gridlines=false" class="feature-item">
+                    <span class="icon"><i class="fas fa-book-reader"></i></span>
+                    <span>LOGBOOK PESTISIDA</span>
+                </a>
+
+                <a href="https://ebastari.github.io/camerav02/V02.html" class="feature-item">
+                    <span class="icon"><i class="fas fa-camera"></i></span>
+                    <span>MONTANA V2</span>
+                </a>
+                <a href="https://ebastari.github.io/Kesehatan-Daun-AI/Kesehatan%20Daun%20AI" class="feature-item">
+                    <span class="icon"><i class="fas fa-heartbeat"></i></span>
+                    <span>Analisis Kesehatan Daun</span>
+                </a>
+                <a href="https://ebastari.github.io/chatAI/Montana%20AI%20Sederhana" class="feature-item">
+                    <span class="icon"><i class="fas fa-headset"></i></span>
+                    <span>Chat Montana AI</span>
+                </a>
+
+                <a href="https://ebastari.github.io/Tinggi/Tinggi%20Fix.Html" class="feature-item">
+                    <span class="icon"><i class="fas fa-arrows-alt-v"></i></span>
+                    <span>Pengukur Tinggi</span>
+                </a>
+                </a>
+                <a href="https://www.appsheet.com/start/91bfe218-36d0-4f6e-ac9e-ca32b4ddb0c7?platform=desktop#appName=RimbaRaya-863683625-25-05-22&vss=H4sIAAAAAAAAA6WOMQ7CMBAE_7K1X-AWUSAUGhANpjjii2SR2BF2gMjy37lAEHVEeXOa3c24O37sE9VX6FP-XVseoZENDmPPBtpgFXy6hdZAGeyo-8BKIHkyKChn9dUTR-i8yNZ_dSs4yz65xvFtippEiZg1eU-SgFlBUeiGRJeW32tFKUVYE-ohsj3KkOUD4savnz15WwUriQ21kcsLJnTIJmABAAA=&view=Montana" class="feature-item">
+                    <span class="icon"><i class="fas fa-globe"></i></span>
+                    <span>My Maps Appsheet</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <a href="pages/home.html" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Beranda</span>
+            </a>
+            <a href="https://www.appsheet.com/start/91bfe218-36d0-4f6e-ac9e-ca32b4ddb0c7?platform=desktop#appName=RimbaRaya-863683625-25-05-22&vss=H4sIAAAAAAAAA6WOMQ7CMBAE_7K1X-ASRIEQNCAaTOHEZ8kisaPYASLLf-cSQNQR5c1pdjfj7uhxTLq-QV7y79rRCImscBo7UpAK6-BTHxoFoXDQ7RuuXOWSQkG5iq-cKELmBa78o1fAGfLJWUf9FDRpHPCR-D0pDGYBRaAdkq4amneyUAozG-ohkjnziKXlces3z057sw-G86xuIpUXf0AzE1YBAAA=&view=Bibit" class="nav-item">
+                <i class="fas fa-seedling"></i>
+                <span>Bibit</span>
+            </a>
+            <a href="https://ebastari.github.io/mapsmontana/mymaps.html" class="nav-item">
+                <i class="fas fa-leaf"></i>
+                <span>Montana</span>
+            </a>
+            <a href="https://www.appsheet.com/start/91bfe218-36d0-4f6e-ac9e-ca32b4ddb0c7?platform=desktop#appName=RimbaRaya-863683625-25-05-22&vss=H4sIAAAAAAAAA63POQ7CMBAF0KtEU_sE7hJEYZYIJYYGU5h4IllkU-wAkeW747CIiiqU80d688fBVeMtt7K4AD2677TGESg4AXzsUAAVsGgb27eVACIglfUr3GUs5VG-z2IereJNnEYJSxgX4MGfyIezaIC6WRr9azcCWmFjdamxn-gJCuSbCesJCcEPAjyBerDyXOHzu0B4H7KyLQaD6hCKzi9oWLO8d7JR21aFC6WsDPoHGNFPwLABAAA=&view=PRINT%20SURAT%20JALAN%20BIBIT" class="nav-item">
+                <i class="fas fa-bell"></i>
+                <span>Notifikasi</span>
+            </a>
+            <a href="https://ebastari.github.io/Profil/profil2" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Profil</span>
+            </a>
+  </a>
+            <a href="https://www.appsheet.com/start/91bfe218-36d0-4f6e-ac9e-ca32b4ddb0c7?platform=desktop#appName=RimbaRaya-863683625-25-05-22&vss=H4sIAAAAAAAAA6WOywrCMBRE_2XW-YLsRIoUHwsVN8ZFbG4h2CalSdUS8u8mVnFdXN5zOTMTcNf0OHhZ3cDP4XetaQRHEDiOHQlwgaU1vreNABPYyXaCq8Wm2JcCEfHCvrYnBx7myPyfZgatyHhda-pzUvZSwsdK7-wkMBmIDO3g5bWh99RkxJhYbavBkTqlGbPrXWmKZyeN2lqVAmvZOIovFtYuNVsBAAA=&view=GALERI" class="nav-item">
+                <i class="fas fa-camera"></i>
+                <span>GALERI</span>
+            </a>
+
+
+        </div>
+    </div>
+<script>
+    const levelDisplay = document.getElementById("currentLevel");
+    const levelDesc = document.getElementById("levelDesc");
+    const levelIcon = document.getElementById("levelIcon"); // Ambil elemen icon
+    const timeDisplay = document.getElementById("liveTime");
+    const currentLocationSpan = document.getElementById("currentLocation"); // Ambil elemen lokasi
+    let totalSeconds = parseInt(localStorage.getItem("activeSeconds")) || 0;
+
+    // Fungsi untuk mendapatkan lokasi saat ini
+    function getCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                // Anda bisa menggunakan layanan geocoding terbalik di sini
+                // Untuk demo, kita akan menggunakan placeholder atau nama desa statis
+                currentLocationSpan.textContent = ` (Lat: ${latitude.toFixed(2)}, Lon: ${longitude.toFixed(2)})`;
+                // Atau, ganti dengan nama desa statis jika tidak ingin API eksternal
+                // currentLocationSpan.textContent = "Desa Sukamaju";
+            }, error => {
+                console.error("Error getting location: ", error);
+                currentLocationSpan.textContent = "Lokasi tidak tersedia"; // Fallback jika gagal
+            });
+        } else {
+            currentLocationSpan.textContent = "Geolocation tidak didukung"; // Fallback jika browser tidak mendukung
+        }
+    }
+
+    // Panggil fungsi lokasi saat halaman dimuat
+    getCurrentLocation();
+
+    setInterval(() => {
+      totalSeconds++;
+      localStorage.setItem("activeSeconds", totalSeconds);
+
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      timeDisplay.textContent = `${days}h ${hours}j ${minutes}m ${seconds}d`;
+
+      const minutesActive = totalSeconds / 60;
+      let level = "Tumbuhan Bawah";
+      let desc = "Tumbuhan tidak berkayu yang berada di lantai hutan.";
+      let icon = "🌿"; // Default icon
+      
+      if (minutesActive >= 60) { level = "Pohon"; desc = "Tumbuhan berkayu dewasa (≥20 cm). (+25%)"; icon = "🌳"; }
+      else if (minutesActive >= 30) { level = "Tiang"; desc = "Pohon muda diameter 10–20 cm. (+12%)"; icon = "🌲"; }
+      else if (minutesActive >= 10) { level = "Pancang"; desc = "Anakan >1,5 m tapi <10 cm diameter. (+5%)"; icon = "🌱"; }
+      else if (minutesActive >= 1) { level = "Semai"; desc = "Anakan pohon tinggi <1,5 m."; icon = "🌱"; }
+
+      levelDisplay.textContent = level;
+      levelDesc.textContent = desc;
+      levelIcon.textContent = icon; // Set ikon baru
+    }, 1000);
+
+    console.log("Hai Forester 🌿 — rawat pohonmu untuk kehidupan!");
+  </script>
+</body>
+</html>
