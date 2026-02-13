@@ -203,10 +203,11 @@ export const AdminActivityLogs: React.FC<AdminActivityLogsProps> = ({ onClose })
                       <td className="p-8">
                         <div className="flex items-center gap-4">
                           <div className="w-10 h-10 rounded-2xl bg-slate-900 dark:bg-emerald-600 text-white flex items-center justify-center font-black text-[10px] uppercase shadow-lg group-hover:scale-110 transition-transform">
-                            {log.user.charAt(0)}
+                            {typeof log.user === "string" ? log.user.charAt(0) : "?"}
                           </div>
                           <div className="flex flex-col">
-                            <span className="text-[13px] font-black text-slate-900 dark:text-white uppercase tracking-tight">{log.user}</span>
+                            <span className="text-[13px] font-black text-slate-900 dark:text-white uppercase tracking-tight">{typeof log.user === "string" ? log.user : "Unknown"}
+</span>
                             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tight">
                               {new Date(log.timestamp).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })} @ {new Date(log.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
                             </span>
